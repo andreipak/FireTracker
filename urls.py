@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
 
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
@@ -9,4 +8,7 @@ urlpatterns = patterns('',
     (r'^firetracker/fire/(?P<un_id>[-\w]+)/(?P<address>[-\w]+)/$', 'firetracker.fires.views.fire'),
     (r'^firetracker/person/(?P<un_id>[-\w]+)/(?P<slug>[-\w]+)/$', 'firetracker.fires.views.person'),
     (r'^firetracker/admin/', include(admin.site.urls)),
+
+    # Uncomment the admin/doc line below to enable admin documentation:
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 )
