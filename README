@@ -1,1 +1,1 @@
-This is a fork of Andy Boyle's Django tutorial at andyboyle.com. Just some models, views and templates for setting up a basic Django app to track fires.
+This is a fork of Andy Boyle's Django tutorial at andyboyle.com. Just some models, views and templates for setting up a basic Django app to track fires. I added maps: http://www.megantaylor.org/2011/07/12/adding-maps-to-firetracker/
