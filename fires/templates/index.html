@@ -1,0 +1,136 @@
+<!doctype html><!-- simplified doctype works for all previous versions of HTML as well -->
+
+<!-- Paul Irish's technique for targeting IE, modified to only target IE6, applied to the html element instead of body -->
+<!--[if lt IE 7 ]><html lang="en" class="no-js ie6"><![endif]-->
+<!--[if (gt IE 6)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+
+<head>
+	<!-- simplified character encoding -->
+	<meta charset="utf-8">
+
+	<title>FireTracker</title>
+	<meta name="description" content="FireTracker">
+	<meta name="author" content="">
+
+	<!-- Main style sheet. Change version number in query string to force styles refresh -->
+	<!-- Link element no longer needs type attribute -->
+	<link rel="stylesheet" href="http://mtaylor.webfactional.com/media/css/screen.css?v=1.0">
+
+	<!-- Modernizr for feature detection of CSS3 and HTML5; must be placed in the "head" -->
+	<!-- Script tag no longer needs type attribute -->
+	<script src="http://mtaylor.webfactional.com/media/js/modernizr-1.6.min.js"></script>
+
+	<!-- Remove the script reference below if you're using Modernizr -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+
+<!-- If possible, use the body as the container -->
+<!-- The "home" class is an example of a dynamic class created on the server for page-specific targeting -->
+<body class="home">
+{% load easy_maps_tags %}
+	<!-- ******************************************************************** -->
+	<!-- The content below is for demonstration of some common HTML5 elements  -->
+	<!-- More than likely you'll rip out everything except header/section/footer and start fresh -->
+	<!-- This is the main "div" that wraps the content generically; don't use "section" for this -->
+	<div id="main">
+		<!-- First header has an ID so you can give it individual styles, and target stuff inside it -->
+	<header id="hd1">
+
+		<!-- "hgroup" is used to make two headings into one, to prevent a new document node from forming -->
+		<hgroup>
+		<h1>FIRETRACKER</h1>
+		</hgroup>
+
+		<!-- Main nav, styled by targeting "#hd1 nav"; you can have more than one nav element per page -->
+<!--
+		<nav>
+			<ul>
+				<li><a href="#">Home</a></li>
+				<li><a href="#">About</a></li>
+				<li><a href="#">Services</a></li>
+				<li><a href="#">Contact</a></li>
+			</ul>
+		</nav>
+-->
+
+	</header><!-- #hd1 -->
+    <script type="text/javascript"
+    src="http://maps.google.com/maps/api/js?sensor=false">
+    </script>
+    <script type="text/javascript">
+    function initialize() {
+    var latlng = new google.maps.LatLng(38.922950 , -97.734375);
+    var myOptions = {
+    zoom: 4,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    {% for f in fires %}
+    var marker_{{forloop.counter}} = new google.maps.Marker({
+    position: new google.maps.LatLng({{f.geocode.latitude}}, {{f.geocode.longitude}}),
+    map: map
+    });
+    google.maps.event.addListener(marker_{{forloop.counter}}, 'click', function() {
+    infowindow_{{forloop.counter}}.open(map,marker_{{forloop.counter}});
+    });
+    {% endfor %}
+    }
+    window.onload = initialize;
+    </script> 
+    
+     <div id="map_canvas">
+    &nbsp;
+    </div> 
+		<!-- The first of two "section" elements for demo purposes; optional class added for styling (hs1 = "home section 1") -->
+		<section class="hs1">
+		<!-- Each section should begin with a new h1 (not h2), and optionally a header -->
+		<!-- You can have more than one header/footer pair on a page -->
+<h2>Recent fires:</h2> 
+<ul>{% for f in fires %}<li>{{ f.date.date }} -- <a href="{{f.get_absolute_url}}">{{ f.location.street }}</a></li>{% endfor %}</ul>
+<hr >
+		</section><!-- .hs1 -->
+<section class="hs2">
+
+<h3>Other ways this data could be used:</h3>
+
+<div class="firemap">
+{% for f in fires %}
+<p>{% easy_map f.location.full_address 200 200 %}</p>
+{% endfor %}
+</div>
+<div class="firesum">
+{% for f in fires %}
+<div class="sum">
+<p>There was a fire on {{ f.date.date }} {% if f.cause %}caused by {{ f.cause.type.lower }}{% else %}with an unknown cause {% endif %} at {{ f.location.street }}, according to <a href="{{ f.source.get_absolute_url }}">{{ f.source.title.title_short }} {{ f.source.first_name }} {{ f.source.last_name }}</a> of the {{ f.source.title.employer.name }}.{% if f.monetary_damage %} The fire caused ${{ f.monetary_damage }} in damage.{% endif %}{% if f.victims %} There were injuries. {% else %} There were no injuries. {% endif %} <a href="{{ f.get_absolute_url }}">Click here for more information.</a></p>
+</div>
+{% endfor %}
+</div>
+<div style="clear:both;"></div>
+<p>You can add other tags to elaborate on the story.</p>
+<hr >
+</section>
+
+	</div><!-- #main -->
+	
+	<!-- The main footer has an ID for targeting, similar to the main header -->
+	<footer id="f1">
+	<p class="small">Built by <cite><a href="http://www.megantaylor.org">Megan Taylor</a></cite> using <a href="http://www.andymboyle.com/2011/01/30/step-two-installing-setting-up-basic-django-project/">Andy Boyle's tutorial</a>, modified for my own Webfaction setup. Added <a href="https://bitbucket.org/kmike/django-easy-maps">django-easy-maps</a> integration.</p>
+	<a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!"><img src="http://media.djangopony.com/img/small/badge.png" width="210" height="65" alt="pony powered"></a>
+	</footer><!-- #f1 -->
+
+<!-- Remote jQuery with local fallback; taken from HTML5 Boilerplate http://html5boilerplate.com -->
+<!-- jQuery version might not be the latest; check jquery.com -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery-1.4.4.min.js"%3E%3C/script%3E'))</script>
+
+<!-- Below is your script file, which has a basic JavaScript design pattern that you can optionally use -->
+<!-- Keep this and plugin scripts at the bottom for faster page load; combining and minifying scripts is recommended -->
+<script src="http://mtaylor.webfactional.com/media/js/general.js"></script>
+<!-- asynchronous analytics code by Mathias Bynens; change UA-XXXXX-X to your own code; http://mathiasbynens.be/notes/async-analytics-snippet -->
+<!-- this can also be placed in the <head> if you want page views to be tracked quicker -->
+</body>
+</html>

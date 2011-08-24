@@ -1,0 +1,100 @@
+<!doctype html><!-- simplified doctype works for all previous versions of HTML as well -->
+
+<!-- Paul Irish's technique for targeting IE, modified to only target IE6, applied to the html element instead of body -->
+<!--[if lt IE 7 ]><html lang="en" class="no-js ie6"><![endif]-->
+<!--[if (gt IE 6)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+
+<head>
+	<!-- simplified character encoding -->
+	<meta charset="utf-8">
+
+	<title>FireTracker</title>
+	<meta name="description" content="FireTracker">
+	<meta name="author" content="">
+
+	<!-- Main style sheet. Change version number in query string to force styles refresh -->
+	<!-- Link element no longer needs type attribute -->
+	<link rel="stylesheet" href="http://mtaylor.webfactional.com/media/css/screen.css?v=1.0">
+
+	<!-- Modernizr for feature detection of CSS3 and HTML5; must be placed in the "head" -->
+	<!-- Script tag no longer needs type attribute -->
+	<script src="http://mtaylor.webfactional.com/media/js/modernizr-1.6.min.js"></script>
+
+	<!-- Remove the script reference below if you're using Modernizr -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+
+<!-- If possible, use the body as the container -->
+<!-- The "home" class is an example of a dynamic class created on the server for page-specific targeting -->
+<body class="home">
+	
+	<!-- ******************************************************************** -->
+	<!-- The content below is for demonstration of some common HTML5 elements  -->
+	<!-- More than likely you'll rip out everything except header/section/footer and start fresh -->
+	
+	<!-- First header has an ID so you can give it individual styles, and target stuff inside it -->
+	
+	<header id="hd1">
+
+		<!-- "hgroup" is used to make two headings into one, to prevent a new document node from forming -->
+		<hgroup>
+		<h1>FIRETRACKER</h1>
+		</hgroup>
+
+		<!-- Main nav, styled by targeting "#hd1 nav"; you can have more than one nav element per page -->
+
+		<nav>
+<p><a href="/firestarter/">Return to home</a></p>
+		</nav>
+
+	</header><!-- #hd1 -->
+
+	<!-- This is the main "div" that wraps the content generically; don't use "section" for this -->
+	<div id="main">
+
+		<!-- The first of two "section" elements for demo purposes; optional class added for styling (hs1 = "home section 1") -->
+		<section class="hs1">
+		<!-- Each section should begin with a new h1 (not h2), and optionally a header -->
+		<!-- You can have more than one header/footer pair on a page -->
+<p><strong>Date:</strong> {{ fire.date.date }}</p>
+<p><strong>Street:</strong> {{ fire.location.street }}</p>
+<p><strong>City:</strong> {{ fire.location.city.name }}, {{ fire.location.city.state.short_name }}</p>
+<p><strong>Responding:</strong> {% if fire.respondings %}{% for r in fire.respondings.all %}{{ r.department.name }}'s {{ r.name }}{% endfor %}{% else %}Not available{% endif %} </p>
+<p><strong>Fire reported:</strong> {% if fire.date.time %}{{ fire.date.time }}{% else %}Not available{% endif %}</p>
+{% if fire.response_time %}<p><strong>Response time:</strong> {{ fire.time_took }}</p>{% endif %}
+{% if fire.extinguish_time %}<p><strong>Extinguish time:</strong> {{ fire.extinguish_time_took }}</p>{% endif %}
+<p><strong>Property value:</strong> {% if fire.location.property_value %}${{ fire.location.property_value }}{% else %}Not available{% endif %}</p>
+<p><strong>Property damage:</strong> {% if fire.monetary_damage %}${{ fire.monetary_damage }}{% else %}Not available{% endif %}</p>
+<p><strong>Injured:</strong> {% for v in fire.victims.all %}{% if forloop.first %}{% else %}, {% endif %}{{ v.person.first_name }} {{ v.person.last_name }}{% if v.injury %} with {{ v.injury|lower }}{% endif %}{% endfor %}</p>
+<p><strong>Fire cause:</strong> {% if fire.cause %}{{ fire.cause.type }}{% else %}Unknown{% endif %}</p>
+<p><strong>Media coverage:</strong> {% for s in fire.story_links.all %}{% if forloop.first %}{% else %}, {% endif %}<a href="{{ s.link }}">{{ s.headline }}</a>{% endfor %}</p>
+<p><i>Information from <a href="{{ fire.source.get_absolute_url}}">{{ fire.source.title.title_short }} {{ fire.source.first_name }} {{ fire.source.last_name }}</a> of {{ fire.source.title.employer.name }}.</i></p>
+<p></p>
+		</section><!-- .hs1 -->
+
+
+	</div><!-- #main -->
+	
+	<!-- The main footer has an ID for targeting, similar to the main header -->
+	<footer id="f1">
+	<p>Built by <cite><a href="http://www.megantaylor.org">Megan Taylor</a></cite> using <a href="http://www.andymboyle.com/2011/01/30/step-two-installing-setting-up-basic-django-project/">Andy Boyle's tutorial</a>.</p>
+	</footer><!-- #f1 -->
+
+<!-- Remote jQuery with local fallback; taken from HTML5 Boilerplate http://html5boilerplate.com -->
+<!-- jQuery version might not be the latest; check jquery.com -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery-1.4.4.min.js"%3E%3C/script%3E'))</script>
+
+<!-- Below is your script file, which has a basic JavaScript design pattern that you can optionally use -->
+<!-- Keep this and plugin scripts at the bottom for faster page load; combining and minifying scripts is recommended -->
+<script src="http://mtaylor.webfactional.com/media/js/general.js"></script>
+
+<!-- asynchronous analytics code by Mathias Bynens; change UA-XXXXX-X to your own code; http://mathiasbynens.be/notes/async-analytics-snippet -->
+<!-- this can also be placed in the <head> if you want page views to be tracked quicker -->
+</body>
+</html>
+
+
